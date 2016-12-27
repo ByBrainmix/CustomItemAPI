@@ -1,0 +1,10 @@
+name: CustomItemTest
+version: 1.0
+author: Brainmix
+main: me.brainmix.customitemapi.MainPlugin
+description: ExamplePlugin to see, how to use the CustomItemAPI
+
+commands:
+  getitems:
+    usage: /getitems
+    description: get all customitems
