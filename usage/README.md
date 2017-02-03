@@ -1,1 +1,0 @@
-ExamplePlugin using the _CustomItemAPI_
