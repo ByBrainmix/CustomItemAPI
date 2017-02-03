@@ -1,4 +1,4 @@
 #CustomItemAPI
 
-CustomItemAPI v2.0 by Brainmix  
+CustomItemAPI v1.0 by Brainmix  
 for Spigot 1.8  
