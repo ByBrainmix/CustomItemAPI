@@ -6,6 +6,7 @@ import me.brainmix.itemapi.api.ItemOptions;
 import me.brainmix.itemapi.api.ItemUser;
 import me.brainmix.itemapi.api.controllers.ItemHandler;
 import me.brainmix.itemapi.api.delay.ItemDelay;
+import me.brainmix.itemapi.api.delay.ItemDelayAmount;
 import me.brainmix.itemapi.api.events.ItemDelayEndEvent;
 import me.brainmix.itemapi.api.events.ItemDelayTickEvent;
 import me.brainmix.itemapi.api.events.ItemLeftClickEvent;
@@ -25,7 +26,7 @@ public class ItemDelayTest extends CustomItem implements Clickable {
         options.setItemStack(ItemUtils.getItemStack(Material.EMERALD, "&aDelay Test"));
         options.setInteractWithOthers(true);
         options.setClickSound(new ClickSound(Sound.CLICK, 1, 1));
-        options.setItemDelay(new ItemDelay(60));
+        options.setItemDelay(new ItemDelayAmount(120, this));
     }
 
     @ItemHandler

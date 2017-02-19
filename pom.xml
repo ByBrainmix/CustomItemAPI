@@ -17,7 +17,7 @@
 
     <modules>
         <module>api</module>
-		<module>usage</module>
+        <module>usage</module>
     </modules>
 
     <repositories>

@@ -2,12 +2,17 @@ package me.brainmix.itemapi.api.delay;
 
 import me.brainmix.itemapi.api.utils.Actionbar;
 import me.brainmix.itemapi.api.utils.ItemUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ItemDelayChar extends ItemDelay implements DelayDisplay {
 
     private String character;
     private int size;
+    private String pattern = "< %delay% >";
+    private ChatColor colorFull = ChatColor.AQUA;
+    private ChatColor colorLeft = ChatColor.RED;
+    private ChatColor colorRight = ChatColor.GREEN;
 
     public ItemDelayChar(int delay, String character, int size) {
         super(delay);
@@ -16,13 +21,15 @@ public class ItemDelayChar extends ItemDelay implements DelayDisplay {
     }
 
     public ItemDelayChar(int delay, String pattern) {
-        super(delay, pattern);
+        super(delay);
+        this.pattern = pattern;
         this.character = "|";
         this.size = 50;
     }
 
     public ItemDelayChar(int delay, String pattern, String character, int size) {
-        super(delay, pattern);
+        super(delay);
+        this.pattern = pattern;
         this.character = character;
         this.size = size;
     }
@@ -62,5 +69,38 @@ public class ItemDelayChar extends ItemDelay implements DelayDisplay {
     public void setSize(int size) {
         this.size = size;
     }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public ChatColor getColorFull() {
+        return colorFull;
+    }
+
+    public void setColorFull(ChatColor colorFull) {
+        this.colorFull = colorFull;
+    }
+
+    public ChatColor getColorLeft() {
+        return colorLeft;
+    }
+
+    public void setColorLeft(ChatColor colorLeft) {
+        this.colorLeft = colorLeft;
+    }
+
+    public ChatColor getColorRight() {
+        return colorRight;
+    }
+
+    public void setColorRight(ChatColor colorRight) {
+        this.colorRight = colorRight;
+    }
+
 
 }
