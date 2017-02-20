@@ -1,31 +1,23 @@
 package me.brainmix.itemapi.api.controllers;
 
-import java.util.Collection;
-
+import me.brainmix.itemapi.api.CustomItem;
+import me.brainmix.itemapi.api.ItemRegister;
+import me.brainmix.itemapi.api.ItemUser;
+import me.brainmix.itemapi.api.events.*;
+import me.brainmix.itemapi.api.interfaces.Throwable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.brainmix.itemapi.api.CustomItem;
-import me.brainmix.itemapi.api.ItemUser;
-import me.brainmix.itemapi.api.events.ItemFlyTickEvent;
-import me.brainmix.itemapi.api.events.ItemHitEntityEvent;
-import me.brainmix.itemapi.api.events.ItemHitGroundEvent;
-import me.brainmix.itemapi.api.events.ItemThrowEvent;
-import me.brainmix.itemapi.api.interfaces.Throwable;
+import java.util.Collection;
 
-public class ThrownItemManager {
+public class ItemThrowManager extends AbstractItemManager {
 
     public static double NEARBY_ENTITIES_OFFSET = 0.3;
 
-    private Plugin plugin;
-    private ItemEventManager eventManager;
-
-    public ThrownItemManager(Plugin plugin, ItemEventManager eventManager) {
-        this.plugin = plugin;
-        this.eventManager = eventManager;
+    public ItemThrowManager(ItemRegister register) {
+        super(register);
     }
 
     public Item throwItem(CustomItem item, ItemUser user) {
@@ -38,7 +30,7 @@ public class ThrownItemManager {
         if(!(item instanceof Throwable)) return thrownItem;
 
         ItemThrowEvent event = new ItemThrowEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem);
-        eventManager.callEvent(item, event);
+        getRegister().getEventManager().callEvent(item, event);
 
         if(event.isCancelled()) {
             thrownItem.remove();
@@ -56,17 +48,26 @@ public class ThrownItemManager {
                 if(!entities.isEmpty()) {
                     for(Entity entity : entities) {
                         ItemHitEntityEvent itemHitEntityEvent = new ItemHitEntityEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem, entity);
-                        eventManager.callEvent(item, itemHitEntityEvent);
+                        getRegister().getEventManager().callEvent(item, itemHitEntityEvent);
                         if(itemHitEntityEvent.isCancelled()) {
                             this.cancel();
                             return;
+                        }
+
+                        if(entity instanceof Player) {
+                            ItemHitPlayerEvent itemHitPlayerEvent = new ItemHitPlayerEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem, (Player) entity);
+                            getRegister().getEventManager().callEvent(item, itemHitPlayerEvent);
+                            if(itemHitPlayerEvent.isCancelled()) {
+                                this.cancel();
+                                return;
+                            }
                         }
                     }
                 }
 
                 if(thrownItem.isOnGround()) {
                     ItemHitGroundEvent hitGroundEvent = new ItemHitGroundEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem);
-                    eventManager.callEvent(item, hitGroundEvent);
+                    getRegister().getEventManager().callEvent(item, hitGroundEvent);
                     if(hitGroundEvent.isCancelled()) {
                         this.cancel();
                         return;
@@ -74,7 +75,7 @@ public class ThrownItemManager {
                 }
 
                 ItemFlyTickEvent event = new ItemFlyTickEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem, timeInAir);
-                eventManager.callEvent(item, event);
+                getRegister().getEventManager().callEvent(item, event);
                 if(event.isCancelled()) {
                     this.cancel();
                     return;
@@ -88,7 +89,7 @@ public class ThrownItemManager {
 
                 timeInAir++;
             }
-        }.runTaskTimer(plugin, 0, 0);
+        }.runTaskTimer(getRegister().getPlugin(), 0, 0);
 
 
 
