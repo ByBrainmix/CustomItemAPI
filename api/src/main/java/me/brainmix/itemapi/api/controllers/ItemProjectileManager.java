@@ -87,7 +87,6 @@ public class ItemProjectileManager extends AbstractItemManager implements Listen
                 return;
             }
 
-            Bukkit.broadcastMessage("remove id: " + event.getEntity().getEntityId());
             if(event.getEntity() instanceof Arrow) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(getRegister().getPlugin(), () -> {
                     items.remove(event.getEntity().getEntityId());

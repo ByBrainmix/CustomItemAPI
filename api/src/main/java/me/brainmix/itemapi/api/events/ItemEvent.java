@@ -1,12 +1,13 @@
 package me.brainmix.itemapi.api.events;
 
 import me.brainmix.itemapi.api.ItemUser;
-import me.brainmix.itemapi.api.controllers.UserManager;
+import me.brainmix.itemapi.api.controllers.ItemUserManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class ItemEvent {
 
+    private static ItemUserManager userManager;
     private Player player;
     private ItemStack item;
     private int delay;
@@ -18,6 +19,10 @@ public abstract class ItemEvent {
         this.delay = delay;
     }
 
+    public static void setUserManager(ItemUserManager userManager) {
+        ItemEvent.userManager = userManager;
+    }
+
     public int getTimeLeft() {
         return delay;
     }
@@ -27,7 +32,7 @@ public abstract class ItemEvent {
     }
 
     public ItemUser getUser() {
-        return UserManager.a().getUser(player);
+        return userManager.getUser(player);
     }
 
     public ItemStack getItem() {

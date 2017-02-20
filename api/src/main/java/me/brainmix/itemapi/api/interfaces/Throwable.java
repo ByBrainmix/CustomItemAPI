@@ -6,6 +6,7 @@ package me.brainmix.itemapi.api.interfaces;
  * ItemThrowEvent
  * ItemFlyTickEvent
  * ItemHitEntityEvent
+ * ItemHitPlayerEvent
  * ItemHitGroundEvent
  */
 public interface Throwable {

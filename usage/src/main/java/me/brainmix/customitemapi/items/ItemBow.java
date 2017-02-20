@@ -34,7 +34,7 @@ public class ItemBow extends CustomItem implements Shootable {
 
     @ItemHandler
     public void onHit(ItemProjectileHitEvent event) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(MainPlugin.INSTANCE, () -> event.getProjectile().remove(), 1);
+        event.getProjectile().remove();
     }
     @ItemHandler
     public void onHitEntity(ItemProjectileHitEntityEvent event) {

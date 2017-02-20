@@ -31,7 +31,7 @@ public class ItemDelayAmount extends ItemDelay implements DelayDisplay {
         customItem.getOptions().setDrop(false);
 
         ItemStack item = customItem.getOptions().getItemStack().clone();
-        item.setAmount(timeLeft / 20);
+        item.setAmount((timeLeft / 20) + 2);
         ItemUtils.replaceItem(player, customItem.getOptions().getItemStack(), item);
     }
 

@@ -10,14 +10,15 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.brainmix.itemapi.api.controllers.ThrownItemManager;
 import me.brainmix.itemapi.api.utils.Actionbar;
 import me.brainmix.itemapi.api.utils.ItemSlot;
 import me.brainmix.itemapi.api.utils.ItemUtils;
+import org.bukkit.util.Vector;
 
 /**
  * Player wrapper with some extra utils
@@ -25,12 +26,12 @@ import me.brainmix.itemapi.api.utils.ItemUtils;
 public class ItemUser {
 
     private Player player;
-    private ThrownItemManager thrownItemManager;
+    private ItemRegister register;
     private Set<ItemStack> freezedItems = new HashSet<>();
 
-    public ItemUser(Player player, ThrownItemManager thrownItemManager) {
+    public ItemUser(Player player, ItemRegister register) {
         this.player = player;
-        this.thrownItemManager = thrownItemManager;
+        this.register = register;
     }
 
     public boolean hasItemInHand(CustomItem item) {
@@ -184,7 +185,17 @@ public class ItemUser {
     }
 
     public Item throwItem(CustomItem item) {
-        return thrownItemManager.throwItem(item, this);
+        return register.getThrowManager().throwItem(item, this);
+    }
+
+    public <T extends Projectile> T shootProjectile(CustomItem item, Class<T> type) {
+        return register.getProjectileManager().shoot(item, this, type);
+    }
+
+    public <T extends Projectile> T shootProjectile(CustomItem item, Class<T> type, Vector velocity) {
+        T projectile = shootProjectile(item, type);
+        projectile.setVelocity(velocity);
+        return projectile;
     }
 
     public Player getPlayer() {

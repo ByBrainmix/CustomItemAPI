@@ -28,6 +28,8 @@ public class MainPlugin extends JavaPlugin {
             add(player, MainItem.SMOKE);
             add(player, MainItem.PISTOL);
             add(player, MainItem.DELAYTEST);
+            add(player, MainItem.SHOOTER);
+            add(player, MainItem.ULTRABOW);
 
         }
         return true;

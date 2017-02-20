@@ -20,10 +20,17 @@ public class ItemHandlerMethod {
             ItemThrowEvent.class,
             ItemFlyTickEvent.class,
             ItemHitEntityEvent.class,
+            ItemHitPlayerEvent.class,
             ItemHitGroundEvent.class,
             ItemPickupEvent.class,
             ItemDespawnEvent.class,
-            ItemDropEvent.class
+            ItemDropEvent.class,
+            ItemShootEvent.class,
+            ItemShootArrowEvent.class,
+            ItemProjectileFlyTickEvent.class,
+            ItemProjectileHitEvent.class,
+            ItemProjectileHitEvent.class,
+            ItemProjectileHitPlayerEvent.class
     ));
 
     public ItemHandlerMethod(Method method, Class<?> type, ItemHandler handlerAnnotation) {
