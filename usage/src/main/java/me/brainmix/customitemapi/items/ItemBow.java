@@ -1,6 +1,5 @@
 package me.brainmix.customitemapi.items;
 
-import me.brainmix.customitemapi.MainPlugin;
 import me.brainmix.customitemapi.utils.BParticle;
 import me.brainmix.itemapi.api.CustomItem;
 import me.brainmix.itemapi.api.ItemOptions;
@@ -11,7 +10,6 @@ import me.brainmix.itemapi.api.events.ItemProjectileHitEvent;
 import me.brainmix.itemapi.api.events.ItemShootArrowEvent;
 import me.brainmix.itemapi.api.interfaces.Shootable;
 import me.brainmix.itemapi.api.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 public class ItemBow extends CustomItem implements Shootable {
@@ -36,6 +34,7 @@ public class ItemBow extends CustomItem implements Shootable {
     public void onHit(ItemProjectileHitEvent event) {
         event.getProjectile().remove();
     }
+
     @ItemHandler
     public void onHitEntity(ItemProjectileHitEntityEvent event) {
         event.getUser().sendValue("hit", event.getEntity().getType());

@@ -12,7 +12,8 @@ public enum MainItem implements CustomItemEnum {
     PISTOL(new ItemPistol()),
     DELAYTEST(new ItemDelayTest()),
     SHOOTER(new ItemShooter()),
-    ULTRABOW(new ItemBow());
+    ULTRABOW(new ItemBow()),
+    TEST(new ItemTest());
 
     private CustomItem item;
 

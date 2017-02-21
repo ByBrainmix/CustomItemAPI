@@ -30,6 +30,7 @@ public class MainPlugin extends JavaPlugin {
             add(player, MainItem.DELAYTEST);
             add(player, MainItem.SHOOTER);
             add(player, MainItem.ULTRABOW);
+            add(player, MainItem.TEST);
 
         }
         return true;

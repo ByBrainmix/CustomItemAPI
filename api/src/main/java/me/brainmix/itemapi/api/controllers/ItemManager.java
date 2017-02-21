@@ -34,11 +34,14 @@ public class ItemManager extends AbstractItemManager implements Listener {
 
     public static int WAIT_FOR_DAMAGEEVENT_TICKS = 2;
     public static int BETWEEN_INTERACT_AT_ENTITY = 3;
+    public static int RIGHT_CLICK_HOLD_MS = 250;
+    public static int RIGHT_CLICK_RELEASE_TICKS = 7;
 
     private Set<CustomItem> items = new HashSet<>();
     private Set<CustomItem> isHandleAfter = new HashSet<>();
     private Map<Player, Long> rightClicked = new HashMap<>();
     private Set<Player> leftClicked = new HashSet<>();
+    private Map<Player, Long> lastRightClick = new HashMap<>();
 
     private InteractConsumer leftClickConsumer = (ev, i) -> {
         ItemLeftClickEvent e = new ItemLeftClickEvent(ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getDelayManager().getTimeLeft(ev.getPlayer()), ev.getAction());
@@ -231,12 +234,31 @@ public class ItemManager extends AbstractItemManager implements Listener {
             }
         }
 
-        if((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && getRegister().getEventManager().hasWith(id, ItemRightClickEvent.class)) {
+        if((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && (getRegister().getEventManager().hasWith(id, ItemRightClickEvent.class) || getRegister().getEventManager().hasWith(id, ItemRightClickHoldEvent.class))) {
             /* Avoid handling ItemRightClickEvent if ItemRightClickEntityEvent gets called */
+            long current = System.currentTimeMillis();
             if(getRegister().getEventManager().hasWith(id, ItemRightClickEntityEvent.class) && rightClicked.containsKey(player) && System.currentTimeMillis() - rightClicked.get(player) <= BETWEEN_INTERACT_AT_ENTITY) return;
-            ItemRightClickEvent e = new ItemRightClickEvent(player, clickedItem, delay, action);
+            if(!lastRightClick.containsKey(player)) lastRightClick.put(player, current);
+            long lastClick = current - lastRightClick.get(player);
+            lastRightClick.put(player, current);
+            ItemRightClickEvent e = new ItemRightClickEvent(player, clickedItem, delay, action, lastClick, lastClick != 0 && lastClick <= RIGHT_CLICK_HOLD_MS);
             getRegister().getEventManager().callEvent(item, e);
             if(e.isCancelled()) event.setCancelled(true);
+
+            if(lastClick != 0 && lastClick <= (long) RIGHT_CLICK_HOLD_MS) {
+                ItemRightClickHoldEvent rightClickHoldEvent = new ItemRightClickHoldEvent(player, clickedItem, delay, action, lastClick);
+                getRegister().getEventManager().callEvent(item, rightClickHoldEvent);
+                if(rightClickHoldEvent.isCancelled()) event.setCancelled(true);
+                if(getRegister().getEventManager().hasWith(item.getId(), ItemRightClickReleaseEvent.class)) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(getRegister().getPlugin(), () -> {
+                        if(System.currentTimeMillis() - lastRightClick.getOrDefault(player, (long) 0) > RIGHT_CLICK_HOLD_MS) {
+                            ItemRightClickReleaseEvent itemRightClickReleaseEvent = new ItemRightClickReleaseEvent(player, clickedItem, delay, action, System.currentTimeMillis() - lastRightClick.getOrDefault(player, (long) 0));
+                            getRegister().getEventManager().callEvent(item, itemRightClickReleaseEvent);
+                            if(itemRightClickReleaseEvent.isCancelled()) event.setCancelled(true);
+                        }
+                    }, RIGHT_CLICK_RELEASE_TICKS);
+                }
+            }
             if(delay == -1 && getRegister().getEventManager().hasWithoutDelay(id, ItemRightClickEvent.class)) handleAfter(item, player, clickedItem, options);
         }
 
