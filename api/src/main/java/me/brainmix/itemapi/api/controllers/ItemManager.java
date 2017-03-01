@@ -44,7 +44,7 @@ public class ItemManager extends AbstractItemManager implements Listener {
     private Map<Player, Long> lastRightClick = new HashMap<>();
 
     private InteractConsumer leftClickConsumer = (ev, i) -> {
-        ItemLeftClickEvent e = new ItemLeftClickEvent(ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getDelayManager().getTimeLeft(ev.getPlayer()), ev.getAction());
+        ItemLeftClickEvent e = new ItemLeftClickEvent(ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getDelayManager().getTimeLeft(ev.getPlayer()), ev.getAction(), ev.getClickedBlock(), ev.getBlockFace());
         getRegister().getEventManager().callEvent(i, e);
         if(e.isCancelled()) ev.setCancelled(true);
         if(i.getDelayManager().getTimeLeft(ev.getPlayer()) == -1 && getRegister().getEventManager().hasWithoutDelay(i.getId(), ItemLeftClickEvent.class)) handleAfter(i, ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getOptions());
@@ -52,7 +52,7 @@ public class ItemManager extends AbstractItemManager implements Listener {
 
     private InteractConsumer clickConsumer = (ev, i) -> {
         if((getRegister().getEventManager().hasWith(i.getId(), ItemRightClickEntityEvent.class) || getRegister().getEventManager().hasWith(i.getId(), ItemRightClickPlayerEvent.class)) && rightClicked.containsKey(ev.getPlayer()) && System.currentTimeMillis() - rightClicked.get(ev.getPlayer()) <= BETWEEN_INTERACT_AT_ENTITY) return;
-        ItemClickEvent e = new ItemClickEvent(ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getDelayManager().getTimeLeft(ev.getPlayer()), ev.getAction());
+        ItemClickEvent e = new ItemClickEvent(ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getDelayManager().getTimeLeft(ev.getPlayer()), ev.getAction(), ev.getClickedBlock(), ev.getBlockFace());
         getRegister().getEventManager().callEvent(i, e);
         if(e.isCancelled()) e.setCancelled(true);
         if(i.getDelayManager().getTimeLeft(ev.getPlayer()) == -1 && getRegister().getEventManager().hasWithoutDelay(i.getId(), ItemClickEvent.class)) handleAfter(i, ev.getPlayer(), ev.getPlayer().getItemInHand(), i.getOptions());
@@ -241,18 +241,18 @@ public class ItemManager extends AbstractItemManager implements Listener {
             if(!lastRightClick.containsKey(player)) lastRightClick.put(player, current);
             long lastClick = current - lastRightClick.get(player);
             lastRightClick.put(player, current);
-            ItemRightClickEvent e = new ItemRightClickEvent(player, clickedItem, delay, action, lastClick, lastClick != 0 && lastClick <= RIGHT_CLICK_HOLD_MS);
+            ItemRightClickEvent e = new ItemRightClickEvent(player, clickedItem, delay, action,event.getClickedBlock(), event.getBlockFace(), lastClick, lastClick != 0 && lastClick <= RIGHT_CLICK_HOLD_MS);
             getRegister().getEventManager().callEvent(item, e);
             if(e.isCancelled()) event.setCancelled(true);
 
             if(lastClick != 0 && lastClick <= (long) RIGHT_CLICK_HOLD_MS) {
-                ItemRightClickHoldEvent rightClickHoldEvent = new ItemRightClickHoldEvent(player, clickedItem, delay, action, lastClick);
+                ItemRightClickHoldEvent rightClickHoldEvent = new ItemRightClickHoldEvent(player, clickedItem, delay, action, event.getClickedBlock(), event.getBlockFace(), lastClick, true);
                 getRegister().getEventManager().callEvent(item, rightClickHoldEvent);
                 if(rightClickHoldEvent.isCancelled()) event.setCancelled(true);
                 if(getRegister().getEventManager().hasWith(item.getId(), ItemRightClickReleaseEvent.class)) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(getRegister().getPlugin(), () -> {
                         if(System.currentTimeMillis() - lastRightClick.getOrDefault(player, (long) 0) > RIGHT_CLICK_HOLD_MS) {
-                            ItemRightClickReleaseEvent itemRightClickReleaseEvent = new ItemRightClickReleaseEvent(player, clickedItem, delay, action, System.currentTimeMillis() - lastRightClick.getOrDefault(player, (long) 0));
+                            ItemRightClickReleaseEvent itemRightClickReleaseEvent = new ItemRightClickReleaseEvent(player, clickedItem, delay, action, event.getClickedBlock(), event.getBlockFace(), System.currentTimeMillis() - lastRightClick.getOrDefault(player, (long) 0), false);
                             getRegister().getEventManager().callEvent(item, itemRightClickReleaseEvent);
                             if(itemRightClickReleaseEvent.isCancelled()) event.setCancelled(true);
                         }
@@ -314,7 +314,8 @@ public class ItemManager extends AbstractItemManager implements Listener {
 
         if(options.getItemAfterUse() != null) {
             if(item.compare(player.getItemInHand())) {
-                player.setItemInHand(options.getItemAfterUse());
+                player.setItemInHand(null);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(getRegister().getPlugin(), () -> player.setItemInHand(options.getItemAfterUse()), 1);
             } else {
                 ItemUtils.replaceItem(player, clickedItem, options.getItemAfterUse());
             }

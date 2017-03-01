@@ -31,6 +31,8 @@ public class MainPlugin extends JavaPlugin {
             add(player, MainItem.SHOOTER);
             add(player, MainItem.ULTRABOW);
             add(player, MainItem.TEST);
+            add(player, MainItem.KNIFE);
+            add(player, MainItem.TOGGLETEST);
 
         }
         return true;

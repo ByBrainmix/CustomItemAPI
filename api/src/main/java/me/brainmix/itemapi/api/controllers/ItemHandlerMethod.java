@@ -9,6 +9,7 @@ import java.util.Set;
 
 import me.brainmix.itemapi.api.CustomItem;
 import me.brainmix.itemapi.api.events.*;
+import org.bukkit.Bukkit;
 
 public class ItemHandlerMethod {
 
@@ -43,9 +44,13 @@ public class ItemHandlerMethod {
         if(event.getTimeLeft() == -1 && handlerAnnotation.delay()  && !BLACKLIST.contains(type)) return false;
         if(event.getTimeLeft() != -1 && !handlerAnnotation.delay() && !BLACKLIST.contains(type)) return false;
         try {
+            boolean access = method.isAccessible();
+            method.setAccessible(true);
             method.invoke(item, event);
+            method.setAccessible(access);
             return true;
-        } catch (IllegalAccessException | InvocationTargetException ignore) {}
+        } catch (IllegalAccessException | InvocationTargetException ignore) {
+        }
         return false;
     }
 

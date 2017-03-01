@@ -5,6 +5,7 @@ import java.util.Set;
 
 import me.brainmix.itemapi.api.controllers.*;
 import me.brainmix.itemapi.api.events.ItemEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import me.brainmix.itemapi.api.delay.DelayManager;
@@ -34,8 +35,8 @@ public class ItemRegister {
         items.add(item);
         eventManager.register(item);
         itemManager.setItems(items);
+        item.register(new DelayManager(item, eventManager, plugin), this);
         item.init(item.getOptions());
-        item.setDelayManager(new DelayManager(item, eventManager, plugin));
 
     }
 

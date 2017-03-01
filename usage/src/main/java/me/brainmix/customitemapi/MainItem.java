@@ -2,7 +2,11 @@ package me.brainmix.customitemapi;
 
 import me.brainmix.customitemapi.items.*;
 import me.brainmix.itemapi.api.CustomItem;
+import me.brainmix.itemapi.api.simple.TextItem;
 import me.brainmix.itemapi.api.utils.CustomItemEnum;
+import me.brainmix.itemapi.api.utils.ItemUtils;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 public enum MainItem implements CustomItemEnum {
@@ -13,7 +17,9 @@ public enum MainItem implements CustomItemEnum {
     DELAYTEST(new ItemDelayTest()),
     SHOOTER(new ItemShooter()),
     ULTRABOW(new ItemBow()),
-    TEST(new ItemTest());
+    TEST(new ItemTest()),
+    KNIFE(new ItemKnife()),
+    TOGGLETEST(new ItemToggleTest());
 
     private CustomItem item;
 

@@ -68,10 +68,8 @@ public class ItemThrowManager extends AbstractItemManager {
                 if(thrownItem.isOnGround()) {
                     ItemHitGroundEvent hitGroundEvent = new ItemHitGroundEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem);
                     getRegister().getEventManager().callEvent(item, hitGroundEvent);
-                    if(hitGroundEvent.isCancelled()) {
-                        this.cancel();
-                        return;
-                    }
+                    thrownItem.setPickupDelay(0);
+                    this.cancel();
                 }
 
                 ItemFlyTickEvent event = new ItemFlyTickEvent(player, item.getOptions().getItemStack(), item.getDelayManager().getTimeLeft(player), thrownItem, timeInAir);
